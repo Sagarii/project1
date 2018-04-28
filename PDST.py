@@ -48,18 +48,23 @@ def getPageContent(fileName):
     content_list = list(filter(None,content))
 
     str = ''
-    final_list = []
+    formated_list = []
     for w in content_list:
         if re.match(r'[0-9]+',w):
-            final_list.append(str.strip())
+            formated_list.append(str.strip())
             str = ''
-            final_list.append(w)
+            formated_list.append(w)
         else:
             str += w+' '
 
-    return final_list;
+    return formated_list
+
+# When we give file content list and page we need, this method return page number. 
+def getDataPageNumber(content_list,content_we_need):
+    table_page_num = content_list[content_list.index(content_we_need) + 1]
+    
+    return table_page_num
 
 
-def 
 
 print(getPageContent('hotels and travels.pdf'))
