@@ -143,20 +143,18 @@ def write_new_pdf(extracting_page,file_name):
     return 1
 
 
-def all_in_one(report_file_name):
+def execute(report_file_name):
     
     clist = get_page_content(report_file_name) #Step 1
         
     tables_we_need = ['Statement of Financial Position', 'Income Statement', 'Statement of Other Comprehensive Income', 'Statement of Cash Flow','Cash Flow Statement', 'Five Year Summary','Ten Year Summary']
     list_of_pdf = []
     for content_we_need in tables_we_need:
-        
         page_num = get_data_page_number(clist,content_we_need) #Step 2
-
         if(page_num):
             new_pdf_name = report_file_name.split('.')[0]+'-'+content_we_need
         
-            c = write_new_pdf(page_num,new_pdf_name)
+            c = write_new_pdf(page_num,new_pdf_name) #Step 3
 
             if c:
                 print(content_we_need+' done.')
@@ -165,25 +163,8 @@ def all_in_one(report_file_name):
                 print('Sorry')
         else:
             print('Can\'t found content for '+ content_we_need)
-            # print('Try for whole document read..')
-            # page_num = get_tables_from_page(content_we_need)
-            # print(page_num)
 
     return list_of_pdf
 
 
-print(all_in_one('grow.pdf'))
-# print(get_page_content('aia.pdf'))
-
-
-aia_list = ['aia-Statement of Financial Position.pdf', 'aia-Income Statement.pdf', 'aia-Statement of Other Comprehensive Income.pdf', 'aia-Statement of Cash Flow.pdf', 'aia-Five Year Summary.pdf']
-
-
-# word list 
-
-statement_of_financial_position = ['total assets','total equity','liabilities']
-income_statement = []
-statement_of_other_comprehensive_income = []
-statement_of_cash_flow = []
-cash_flow_statement = []
-year_summary = []
+# aia_list = ['aia-Statement of Financial Position.pdf', 'aia-Income Statement.pdf', 'aia-Statement of Other Comprehensive Income.pdf', 'aia-Statement of Cash Flow.pdf', 'aia-Five Year Summary.pdf']
