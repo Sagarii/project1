@@ -132,15 +132,31 @@ def get_data_page_number(content_list,content_we_need):
 # When we give pdf page number and new file name this method can extract it to new seperate pdf file 
 def write_new_pdf(extracting_page,file_name):
     pageToWrite = pdfReader.getPage(extracting_page)
+    
+    pdf_text = pageToWrite.extractText()
+    text_sentense = sent_tokenize(pdf_text)
+    file_content = file_name.split('-')[1]
+    is_correct = False
+    for sen in text_sentense:
+        # print(sen)
+        result = re.findall(r'('+file_content+')', sen, re.IGNORECASE)
+        if(result):
+            is_correct = True
 
-    pdfWriter = PyPDF2.PdfFileWriter()
-    pdfWriter.addPage(pageToWrite)
+    if(is_correct):
+        pdfWriter = PyPDF2.PdfFileWriter()
+        pdfWriter.addPage(pageToWrite)
 
-    newPdfName = file_name+'.pdf'
-    outputStream = open('./pdf/'+newPdfName,'wb')
-    pdfWriter.write(outputStream)
+        newPdfName = file_name+'.pdf'
+        outputStream = open('./pdf/'+newPdfName,'wb')
+        pdfWriter.write(outputStream)
 
-    return 1
+        return 1
+    else:
+        if (extracting_page < 0):
+            return 0
+        
+        return write_new_pdf(extracting_page-1, file_name)
 
 
 def execute(report_file_name):
@@ -160,7 +176,7 @@ def execute(report_file_name):
                 print(content_we_need+' done.')
                 list_of_pdf.append(new_pdf_name+'.pdf')
             else:
-                print('Sorry')
+                print('Error on extracting page '+ content_we_need)
         else:
             print('Can\'t found content for '+ content_we_need)
 

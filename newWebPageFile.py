@@ -3,6 +3,7 @@ from flask import Flask,render_template,request
 from flask_cors import CORS,cross_origin
 from werkzeug.utils import secure_filename
 import os
+import json
 
 UPLOAD_FOLDER = dir_path = os.path.dirname(os.path.realpath(__file__)) + '/uploads'
 ALLOWED_EXTENSIONS = set(['pdf'])
@@ -46,7 +47,7 @@ def upload_file():
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
         json_obj = getData(filename)
-        return json_obj
+        return render_template('data.html',data=json_obj)
 
 
 if __name__ == "__main__":
