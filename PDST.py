@@ -9,6 +9,37 @@ from tabula import read_pdf,convert_into
 import re
 from fuzzy_match import is_ci_token_stopword_match
 
+
+# This method use when the content we need not listed on Contents list
+# Here read whole document and check for pages
+def get_tables_from_page(content_we_need):
+    
+    page_number = 0
+    
+    for i in range(0,pdfReader.numPages):
+        pageObg = pdfReader.getPage(i)
+        pdf_text = pageObg.extractText()
+        text_sentense = sent_tokenize(pdf_text)
+        
+        for sen in text_sentense:
+
+            sn = sen.split('\n')
+            for s in sn:
+                result = re.findall(r'('+content_we_need+')', s, re.IGNORECASE)
+                if(result):
+                    # Now check for is this page contain specific words found on 
+                    # each tables
+                    # TODO
+                    print(s)
+
+                
+        else:
+            continue
+        break
+
+    return page_number
+
+
 # When upload new pdf file, first we can get page content from content page
 # This method return list of content page in this format 
 # > ['Title',01,'title2',02,'title',03...]
@@ -34,7 +65,7 @@ def get_page_content(fileName):
         text_sentense = sent_tokenize(pdf_text)
     
         for sen in text_sentense:
-            result = re.findall(r'(Contents)', sen, re.IGNORECASE)
+            result = re.findall(r'(Content)', sen, re.IGNORECASE)
             if(result):
                 content_page_num = i
                 break
@@ -115,12 +146,13 @@ def write_new_pdf(extracting_page,file_name):
 def all_in_one(report_file_name):
     
     clist = get_page_content(report_file_name) #Step 1
-    
-    tables_we_need = ['Statement of Financial Position', 'Income Statement', 'Statement of Other Comprehensive Income', 'Statement of Cash Flow', 'Five Year Summary']
+        
+    tables_we_need = ['Statement of Financial Position', 'Income Statement', 'Statement of Other Comprehensive Income', 'Statement of Cash Flow','Cash Flow Statement', 'Five Year Summary','Ten Year Summary']
     list_of_pdf = []
     for content_we_need in tables_we_need:
         
         page_num = get_data_page_number(clist,content_we_need) #Step 2
+
         if(page_num):
             new_pdf_name = report_file_name.split('.')[0]+'-'+content_we_need
         
@@ -133,11 +165,25 @@ def all_in_one(report_file_name):
                 print('Sorry')
         else:
             print('Can\'t found content for '+ content_we_need)
+            # print('Try for whole document read..')
+            # page_num = get_tables_from_page(content_we_need)
+            # print(page_num)
 
     return list_of_pdf
 
 
-print(all_in_one('aia.pdf'))
+print(all_in_one('grow.pdf'))
 # print(get_page_content('aia.pdf'))
 
 
+aia_list = ['aia-Statement of Financial Position.pdf', 'aia-Income Statement.pdf', 'aia-Statement of Other Comprehensive Income.pdf', 'aia-Statement of Cash Flow.pdf', 'aia-Five Year Summary.pdf']
+
+
+# word list 
+
+statement_of_financial_position = ['total assets','total equity','liabilities']
+income_statement = []
+statement_of_other_comprehensive_income = []
+statement_of_cash_flow = []
+cash_flow_statement = []
+year_summary = []
